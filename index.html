@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuyển dụng - HR NhiLe Team</title>
+
+<!--
+  ============================================================
+  HƯỚNG DẪN CHO IT TEAM
+  ============================================================
+  1. File này là trang đăng ký phỏng vấn của HR NhiLe Team.
+  2. TRƯỚC ngày 01/06/2026 → tự động hiện banner "Tạm dừng".
+  3. TỪ ngày 01/06/2026 trở đi → tự động hiện form đăng ký.
+  4. Muốn đổi ngày mở lại → sửa biến REOPEN_DATE bên dưới.
+  5. Muốn ép tạm dừng (kể cả sau 01/06) → sửa FORCE_PAUSE = true.
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-soft: #eaf2f4;
+    --bg-mid:  #d6e6ea;
+    --card:   rgba(255, 255, 255, 0.55);
+    --ink:    #1f4750;
+    --ink-soft: #4a6b73;
+    --accent: #2c5f6b;
+    --line:   rgba(44, 95, 107, 0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, #eaf2f4 0%, #c8dde2 100%);
+    overflow-x: hidden;
+  }
+
+  /* ===== Decorative wave shapes (matching the brief image) ===== */
+  body::before,
+  body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    width: 60vw; height: 60vw;
+    left: -20vw; top: -10vw;
+    background: radial-gradient(circle, rgba(180,210,215,0.5) 0%, transparent 70%);
+  }
+  body::after {
+    width: 50vw; height: 50vw;
+    right: -15vw; bottom: -15vw;
+    background: radial-gradient(circle, rgba(160,200,210,0.4) 0%, transparent 70%);
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+  }
+
+  /* ===== Card ===== */
+  .card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 24px;
+    padding: 64px 56px;
+    text-align: center;
+    box-shadow:
+      0 20px 60px rgba(31, 71, 80, 0.08),
+      0 1px 0 rgba(255,255,255,0.8) inset;
+    animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    font-size: 14px;
+    letter-spacing: 0.32em;
+    color: var(--ink);
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--line);
+    margin: 0 auto 36px;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+  }
+
+  .lead {
+    font-size: 17px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-bottom: 40px;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .reopen-block {
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+
+  .reopen-label {
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+
+  .reopen-date {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: clamp(24px, 3.5vw, 32px);
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+
+  /* ===== Countdown ===== */
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .countdown .unit {
+    min-width: 72px;
+    padding: 14px 8px;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 12px;
+  }
+  .countdown .num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .countdown .lbl {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  /* ===== CTA: notify when reopen ===== */
+  .notify {
+    margin-top: 40px;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.6);
+  }
+  .notify-text {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .notify-form {
+    display: flex;
+    gap: 8px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .notify-form input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .notify-form input:focus { border-color: var(--accent); }
+  .notify-form button {
+    padding: 12px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .notify-form button:hover { background: #1f4750; }
+  .notify-success {
+    display: none;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  /* ===== Form view (hiện sau ngày mở lại) ===== */
+  .apply-form { display: none; text-align: left; }
+  .apply-form h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .apply-form .field { margin-bottom: 18px; }
+  .apply-form label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .apply-form input,
+  .apply-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+  }
+  .apply-form button {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .card { padding: 40px 28px; }
+    .notify-form { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <div class="card">
+
+    <!-- ====== VIEW 1: TẠM DỪNG (mặc định trước 01/06/2026) ====== -->
+    <div id="paused-view">
+      <div class="eyebrow">Thông báo tuyển dụng</div>
+      <div class="divider"></div>
+
+      <h1>Tạm dừng nhận hồ sơ</h1>
+      <p class="lead">Chúng tôi hiện không nhận hồ sơ ứng tuyển mới.</p>
+
+      <div class="reopen-block">
+        <div class="reopen-label">Tuyển dụng sẽ chính thức mở lại vào</div>
+        <div class="reopen-date" id="reopen-date-display">01 / 06 / 2026</div>
+
+        <div class="countdown" id="countdown">
+          <div class="unit"><div class="num" id="cd-days">--</div><div class="lbl">Ngày</div></div>
+          <div class="unit"><div class="num" id="cd-hours">--</div><div class="lbl">Giờ</div></div>
+          <div class="unit"><div class="num" id="cd-mins">--</div><div class="lbl">Phút</div></div>
+        </div>
+      </div>
+
+      <div class="notify">
+        <div class="notify-text">Để lại email — chúng tôi sẽ thông báo ngay khi mở lại.</div>
+        <div class="notify-form" id="notify-form">
+          <input type="email" id="notify-email" placeholder="email@cuaban.com" required>
+          <button onclick="handleNotify()">Đăng ký</button>
+        </div>
+        <div class="notify-success" id="notify-success">✓ Cảm ơn bạn — chúng tôi sẽ liên hệ sớm.</div>
+      </div>
+    </div>
+
+    <!-- ====== VIEW 2: FORM ĐĂNG KÝ (hiện sau 01/06/2026) ====== -->
+    <div id="apply-view" class="apply-form">
+      <h2>Đăng ký phỏng vấn</h2>
+      <div class="field">
+        <label>Họ và tên</label>
+        <input type="text" placeholder="Nguyễn Văn A">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" placeholder="email@cuaban.com">
+      </div>
+      <div class="field">
+        <label>Số điện thoại</label>
+        <input type="tel" placeholder="09xxxxxxxx">
+      </div>
+      <div class="field">
+        <label>Vị trí ứng tuyển</label>
+        <input type="text" placeholder="Vd: Nhân viên Marketing">
+      </div>
+      <div class="field">
+        <label>Lời giới thiệu</label>
+        <textarea rows="4" placeholder="Hãy chia sẻ ngắn gọn về bản thân..."></textarea>
+      </div>
+      <button>Gửi hồ sơ</button>
+    </div>
+
+  </div>
+</main>
+
+<footer>HR NhiLe Team</footer>
+
+<script>
+  // ============================================================
+  // CẤU HÌNH — IT chỉ cần sửa 2 dòng dưới đây
+  // ============================================================
+  const REOPEN_DATE = '2026-06-01T00:00:00+07:00'; // Ngày giờ mở lại (giờ VN)
+  const FORCE_PAUSE = false;  // Đặt true để ép tạm dừng (kể cả sau ngày trên)
+  // ============================================================
+
+  function checkStatus() {
+    const now = new Date();
+    const reopen = new Date(REOPEN_DATE);
+    const isPaused = FORCE_PAUSE || now < reopen;
+
+    document.getElementById('paused-view').style.display  = isPaused ? 'block' : 'none';
+    document.getElementById('apply-view').style.display   = isPaused ? 'none'  : 'block';
+
+    if (isPaused) updateCountdown(reopen);
+  }
+
+  function updateCountdown(target) {
+    const diff = target - new Date();
+    if (diff <= 0) { checkStatus(); return; }
+
+    const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const mins  = Math.floor((diff / (1000 * 60)) % 60);
+
+    document.getElementById('cd-days').textContent  = String(days).padStart(2, '0');
+    document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('cd-mins').textContent  = String(mins).padStart(2, '0');
+  }
+
+  function handleNotify() {
+    const email = document.getElementById('notify-email').value.trim();
+    if (!email || !email.includes('@')) {
+      alert('Vui lòng nhập email hợp lệ');
+      return;
+    }
+    // TODO: IT gửi email này về backend / Google Sheet / Zalo
+    console.log('Email đăng ký nhận thông báo:', email);
+
+    document.getElementById('notify-form').style.display = 'none';
+    document.getElementById('notify-success').style.display = 'block';
+  }
+
+  // Khởi động
+  checkStatus();
+  setInterval(() => updateCountdown(new Date(REOPEN_DATE)), 60000); // Cập nhật mỗi phút
+</script>
+
+</body>
+</html>
